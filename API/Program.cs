@@ -28,8 +28,8 @@ namespace API
             {
                var context = services.GetRequiredService<DataContext>();
                context.Database.Migrate();
-               context.Values.Add(new Value { Name = "Richard" });
-               context.Database.CommitTransaction();
+               // context.Values.Add(new Value { Name = "Richard" });
+               // context.Database.CommitTransaction();
             }
             catch (Exception ex)
             {
