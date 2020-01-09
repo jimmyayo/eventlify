@@ -28,8 +28,7 @@ namespace API
             {
                var context = services.GetRequiredService<DataContext>();
                context.Database.Migrate();
-               // context.Values.Add(new Value { Name = "Richard" });
-               // context.Database.CommitTransaction();
+               Seed.SeedData(context);
             }
             catch (Exception ex)
             {
