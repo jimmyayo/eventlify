@@ -17,12 +17,12 @@ namespace Application.Activities
          private DataContext _context;
          public Handler(DataContext context)
          {
-             _context = context;
+            _context = context;
          }
          public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
          {
-             var activities = await _context.Activities.ToListAsync();
-             return activities;
+            var activities = await _context.Activities.ToListAsync();
+            return activities;
          }
       }
    }
