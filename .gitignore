@@ -1,6 +1,6 @@
 bin
 obj
 node_modules\*.*
-.vscode
+# .vscode
 appsettings.json
 *.db
