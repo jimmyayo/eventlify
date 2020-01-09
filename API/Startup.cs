@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
+using Application.Activities;
 
 namespace API
 {
@@ -31,6 +33,9 @@ namespace API
             services.AddDbContext<DataContext>(opt => {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            // Need to add CorsPolicy so the ReactUI can receive responses from WebAPI, which is 
+            // running on different host/port
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyHeader()
@@ -38,6 +43,7 @@ namespace API
                           .WithOrigins("http://localhost:3000");
                 });
             });
+            services.AddMediatR(typeof(List.Handler).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
