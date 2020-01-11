@@ -1,7 +1,11 @@
 import React from 'react';
 import { Menu, Container, Button } from 'semantic-ui-react';
 
-const Navbar = () => {
+interface IProps {
+   openCreateForm: () => void;
+}
+
+const Navbar: React.FC<IProps> = ({openCreateForm}) => {
    return (
       <Menu inverted fixed='top'>
          <Container>
@@ -10,9 +14,9 @@ const Navbar = () => {
                   style={{marginRight: '10px'}} />
                Eventlify
             </Menu.Item>
-            <Menu.Item name='Eventlify' />
+            <Menu.Item name='Activities' />
             <Menu.Item>
-               <Button positive content='Create Activity' />
+               <Button onClick={openCreateForm} positive content='Create Activity' />
             </Menu.Item>
          </Container>
 
