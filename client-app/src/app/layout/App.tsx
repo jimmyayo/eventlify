@@ -1,45 +1,38 @@
-import React, { Component } from 'react';
-import { Header, Icon, List } from 'semantic-ui-react';
+import React, { useState, useEffect, Fragment } from 'react';
+import { Header, Icon, List, Container } from 'semantic-ui-react';
 import './styles.css';
 import axios from 'axios';
+import { IActivity } from '../models/activity';
+import Navbar from '../../features/nav/Navbar';
 
-class App extends Component {
-  state = {
-    activities: []
-  }
 
-  componentDidMount() {
-    axios.get('http://localhost:5000/api/activities')
+const App = () => {
+  const [activities, setActivities] = useState<IActivity[]>([]);
+
+  useEffect(() => {
+    axios
+      .get<IActivity[]>('http://localhost:5000/api/activities')
       .then((response) => {
-        this.setState({
-          activities: response.data
-        })
-      });
-  }
+        setActivities(response.data);
+      })
+  }, []);
 
-  render() {
-    return (
-      <div className="App">
-        <Header as='h2' icon>
-          <Icon name='users' />
-          Eventlify
-          <Header.Subheader>
-            activities
-          </Header.Subheader>
-        </Header>
+  return (
+    <>
+      <Navbar />
+      <Container style={{ marginTop: '7em' }}>
         <List>
           {
-            this.state.activities.map((activity: any) => (
-              <List.Item key={activity.id}>{activity.name}</List.Item>
+            activities.map((activity) => (
+              <List.Item key={activity.id}>{activity.title}</List.Item>
             ))
           }
         </List>
-        <ul>
-
-        </ul>
-      </div>
-    );
-  }
+      </Container>
+    </>
+  );
 }
+
+
 
 export default App;
