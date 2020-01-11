@@ -5,6 +5,7 @@ import axios from 'axios';
 import { IActivity } from '../models/activity';
 import Navbar from '../../features/nav/Navbar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
+import ActivityList from '../../features/activities/dashboard/ActivityList';
 
 const App = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
