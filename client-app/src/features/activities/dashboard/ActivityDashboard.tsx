@@ -24,12 +24,20 @@ const ActivityDashboard: React.FC<IProps> =
    return (
       <Grid>
          <Grid.Column width={10}>
-            <ActivityList activities={activities} selectActivity={selectActivity} />
+            <ActivityList 
+               activities={activities} 
+               selectActivity={selectActivity} />
          </Grid.Column>
          <Grid.Column width={6}>
             {selectedActivity && !isEditing && 
-               <ActivityDetails activity={selectedActivity} setIsEditing={setIsEditing} setSelectedActivity={setSelectedActivity} /> }
-            {isEditing && <ActivityForm setIsEditing={setIsEditing} />} 
+               <ActivityDetails 
+                  activity={selectedActivity} 
+                  setIsEditing={setIsEditing} 
+                  setSelectedActivity={setSelectedActivity} /> }
+            {isEditing && 
+               <ActivityForm 
+                  setIsEditing={setIsEditing}
+                  selectedActivity={selectedActivity!} />} 
          </Grid.Column>
       </Grid>
    )
