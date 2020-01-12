@@ -4,6 +4,7 @@ import { IActivity } from '../../../app/models/activity';
 import ActivityList from './ActivityList';
 import ActivityDetails from '../details/ActivityDetails';
 import ActivityForm from '../form/ActivityForm';
+import { create } from 'domain';
 
 interface IProps {
    activities: IActivity[],
@@ -12,6 +13,8 @@ interface IProps {
    isEditing: boolean;
    setIsEditing: (isEditing: boolean) => void;
    setSelectedActivity: (activity: IActivity | null) => void;
+   createActivity: (activity: IActivity) => void;
+   editActivity: (activity: IActivity) => void;
 }
 
 const ActivityDashboard: React.FC<IProps> = 
@@ -20,7 +23,9 @@ const ActivityDashboard: React.FC<IProps> =
          selectedActivity,
          isEditing,
          setIsEditing,
-         setSelectedActivity }) => {
+         setSelectedActivity,
+         createActivity,
+         editActivity }) => {
    return (
       <Grid>
          <Grid.Column width={10}>
@@ -37,7 +42,9 @@ const ActivityDashboard: React.FC<IProps> =
             {isEditing && 
                <ActivityForm 
                   setIsEditing={setIsEditing}
-                  selectedActivity={selectedActivity!} />} 
+                  selectedActivity={selectedActivity!}
+                  createActivity={createActivity}
+                  editActivity={editActivity} />} 
          </Grid.Column>
       </Grid>
    )

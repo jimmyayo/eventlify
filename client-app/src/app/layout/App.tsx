@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Header, Icon, List, Container } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import './styles.css';
 import axios from 'axios';
 import { IActivity } from '../models/activity';
 import Navbar from '../../features/nav/Navbar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
-import ActivityList from '../../features/activities/dashboard/ActivityList';
 
 const App = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -19,6 +18,19 @@ const App = () => {
   const handleOpenCreateForm = () => {
     setSelectedActivity(null);
     setIsEditing(true);
+  };
+
+  const handleCreateActivity = (activity: IActivity) => {
+    setActivities([...activities, activity]);
+    setSelectedActivity(activity);
+    setIsEditing(false);
+  }
+
+  const handleEditActivity = (activity: IActivity) => {
+    setActivities([...activities.filter(a => a.id !== activity.id),
+      activity]);
+    setSelectedActivity(activity);
+    setIsEditing(false);
   }
 
   useEffect(() => {
@@ -39,7 +51,9 @@ const App = () => {
           selectedActivity={selectedActivity}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
-          setSelectedActivity={setSelectedActivity} />
+          setSelectedActivity={setSelectedActivity}
+          createActivity={handleCreateActivity}
+          editActivity={handleEditActivity} />
       </Container>
     </>
   );

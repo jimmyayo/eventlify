@@ -1,14 +1,17 @@
 import React, { useState, FormEvent } from 'react';
 import { Segment, Form, Button } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/activity';
+import {v4 as uuid} from 'uuid';
 
 interface IProps {
    setIsEditing: (isEditing: boolean) => void;
    selectedActivity: IActivity;
+   createActivity: (activity: IActivity) => void;
+   editActivity: (activity: IActivity) => void;
 }
 
 
-const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity }) => {
+const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity, createActivity, editActivity }) => {
 
    // returns the selected activity prop, or an empty activity object if null was passed down
    const initializeForm = () => {
@@ -35,7 +38,13 @@ const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity }) => {
    };
 
    const handleSubmit = () => {
-      console.log(activity);
+      if (activity.id.length === 0) {
+         let newActivity: IActivity = {...activity, id: 'guid'};
+         createActivity(newActivity);
+      } else {
+         editActivity(activity);
+      }
+
    };
 
    return (
