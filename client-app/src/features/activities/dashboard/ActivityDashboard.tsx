@@ -41,6 +41,7 @@ const ActivityDashboard: React.FC<IProps> =
                   setSelectedActivity={setSelectedActivity} /> }
             {isEditing && 
                <ActivityForm 
+                  key={selectedActivity && selectedActivity.id || 0}
                   setIsEditing={setIsEditing}
                   selectedActivity={selectedActivity!}
                   createActivity={createActivity}

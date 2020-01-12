@@ -68,7 +68,7 @@ const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity, create
                value={activity.category} />
             <Form.Input
                onChange={handleInputChange}
-               type='date'
+               type='datetime-local'
                placeholder='Date'
                name='date'
                value={activity.date} />
