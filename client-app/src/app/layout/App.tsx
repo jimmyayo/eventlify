@@ -32,6 +32,10 @@ const App = () => {
       activity]);
     setSelectedActivity(activity);
     setIsEditing(false);
+  };
+
+  const handleDeleteActivity = (id: string) => {
+    setActivities([...activities.filter(a => a.id !== id)]);
   }
 
   useEffect(() => {
@@ -60,7 +64,8 @@ const App = () => {
           setIsEditing={setIsEditing}
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
-          editActivity={handleEditActivity} />
+          editActivity={handleEditActivity}
+          deleteActivity={handleDeleteActivity} />
       </Container>
     </>
   );

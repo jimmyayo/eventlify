@@ -11,7 +11,12 @@ interface IProps {
 }
 
 
-const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity, createActivity, editActivity }) => {
+const ActivityForm: React.FC<IProps> = 
+      ({ 
+         setIsEditing, 
+         selectedActivity, 
+         createActivity, 
+         editActivity}) => {
 
    // returns the selected activity prop, or an empty activity object if null was passed down
    const initializeForm = () => {
@@ -39,7 +44,7 @@ const ActivityForm: React.FC<IProps> = ({ setIsEditing, selectedActivity, create
 
    const handleSubmit = () => {
       if (activity.id.length === 0) {
-         let newActivity: IActivity = {...activity, id: 'guid'};
+         let newActivity: IActivity = {...activity, id: uuid() };
          createActivity(newActivity);
       } else {
          editActivity(activity);

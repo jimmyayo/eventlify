@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Icon, Image, Button } from 'semantic-ui-react';
+import { Card, Image, Button } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/activity';
 
 interface IProps {
@@ -8,7 +8,8 @@ interface IProps {
    setSelectedActivity: (activity: IActivity | null) => void;
 }
 
-const ActivityDetails:React.FC<IProps> = ({activity, setIsEditing, setSelectedActivity}) => {
+const ActivityDetails: React.FC<IProps> = (
+   { activity, setIsEditing, setSelectedActivity }) => {
    return (
       <Card fluid>
          <Image src={`/assets/categoryImages/${activity.category}.jpg`} wrapped ui={false} />
@@ -23,15 +24,15 @@ const ActivityDetails:React.FC<IProps> = ({activity, setIsEditing, setSelectedAc
          </Card.Content>
          <Card.Content extra>
             <Button.Group widths={2}>
-               <Button 
-                  onClick={() => setIsEditing(true)} 
-                  basic 
-                  color='blue' 
+               <Button
+                  onClick={() => setIsEditing(true)}
+                  basic
+                  color='blue'
                   content='Edit' />
-               <Button 
-                  onClick={() => setSelectedActivity(null)} 
-                  basic 
-                  color='grey' 
+               <Button
+                  onClick={() => setSelectedActivity(null)}
+                  basic
+                  color='grey'
                   content='Cancel' />
             </Button.Group>
          </Card.Content>
