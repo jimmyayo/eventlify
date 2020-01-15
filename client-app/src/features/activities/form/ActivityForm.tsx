@@ -8,6 +8,7 @@ interface IProps {
    selectedActivity: IActivity;
    createActivity: (activity: IActivity) => void;
    editActivity: (activity: IActivity) => void;
+   isSubmitting: boolean;
 }
 
 
@@ -16,7 +17,8 @@ const ActivityForm: React.FC<IProps> =
          setIsEditing, 
          selectedActivity, 
          createActivity, 
-         editActivity}) => {
+         editActivity,
+         isSubmitting}) => {
 
    // returns the selected activity prop, or an empty activity object if null was passed down
    const initializeForm = () => {
@@ -87,7 +89,7 @@ const ActivityForm: React.FC<IProps> =
                placeholder='Venue'
                name='venue'
                value={activity.venue} />
-            <Button floated='right' positive type='submit' content='Submit' />
+            <Button floated='right' positive type='submit' content='Submit' loading={isSubmitting} />
             <Button onClick={() => setIsEditing(false)} floated='right' type='button' content='Cancel' />
          </Form>
       </Segment>

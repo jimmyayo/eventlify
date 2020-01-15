@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Container } from 'semantic-ui-react';
 import './styles.css';
 import { IActivity } from '../models/activity';
@@ -12,6 +12,8 @@ const App = () => {
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [target, setTarget] = useState('');
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.filter(a => a.id === id)[0]);
@@ -24,26 +26,30 @@ const App = () => {
   };
 
   const handleCreateActivity = (activity: IActivity) => {
+    setIsSubmitting(true);
     agent.Activities.create(activity).then(() => {
       setActivities([...activities, activity]);
       setSelectedActivity(activity);
       setIsEditing(false);
-    });
+    }).then(() => setIsSubmitting(false));
   };
 
   const handleEditActivity = (activity: IActivity) => {
+    setIsSubmitting(true);
     agent.Activities.update(activity).then(() => {
       setActivities([...activities.filter(a => a.id !== activity.id),
         activity]);
       setSelectedActivity(activity);
       setIsEditing(false);
-    })
+    }).then(() => setIsSubmitting(false))
   };
 
-  const handleDeleteActivity = (id: string) => {
+  const handleDeleteActivity = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+    setIsSubmitting(true);
+    setTarget(event.currentTarget.name);
     agent.Activities.delete(id).then( () => {
       setActivities([...activities.filter(a => a.id !== id)]);
-    })
+    }).then(() => setIsSubmitting(false))
   }
 
   useEffect(() => {
@@ -75,7 +81,9 @@ const App = () => {
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
-          deleteActivity={handleDeleteActivity} />
+          deleteActivity={handleDeleteActivity}
+          isSubmitting={isSubmitting}
+          target={target} />
       </Container>
     </>
   );
