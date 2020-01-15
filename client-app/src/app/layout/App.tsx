@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from 'semantic-ui-react';
 import './styles.css';
-import axios from 'axios';
 import { IActivity } from '../models/activity';
 import Navbar from '../../features/nav/Navbar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
+import agent from '../api/agent';
+import LoadingComponent from '../layout/LoadingComponent';
 
 const App = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.filter(a => a.id === id)[0]);
@@ -22,42 +24,50 @@ const App = () => {
   };
 
   const handleCreateActivity = (activity: IActivity) => {
-    setActivities([...activities, activity]);
-    setSelectedActivity(activity);
-    setIsEditing(false);
-  }
+    agent.Activities.create(activity).then(() => {
+      setActivities([...activities, activity]);
+      setSelectedActivity(activity);
+      setIsEditing(false);
+    });
+  };
 
   const handleEditActivity = (activity: IActivity) => {
-    setActivities([...activities.filter(a => a.id !== activity.id),
-      activity]);
-    setSelectedActivity(activity);
-    setIsEditing(false);
+    agent.Activities.update(activity).then(() => {
+      setActivities([...activities.filter(a => a.id !== activity.id),
+        activity]);
+      setSelectedActivity(activity);
+      setIsEditing(false);
+    })
   };
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter(a => a.id !== id)]);
+    agent.Activities.delete(id).then( () => {
+      setActivities([...activities.filter(a => a.id !== id)]);
+    })
   }
 
   useEffect(() => {
-    axios
-      .get<IActivity[]>('http://localhost:5000/api/activities')
-      .then((response) => {
+    agent.Activities.list()
+      .then(response => {
         let activities: IActivity[] = [];
-        response.data.forEach(activity => {
+        response.forEach(activity => {
           activity.date = activity.date.split('.')[0];
           activities.push(activity);
         });
 
         setActivities(activities);
       })
+      .then(() => setIsLoading(false))
   }, []);
+
+  if (isLoading) return <LoadingComponent content='Loading activities...' />
 
   return (
     <>
       <Navbar openCreateForm={handleOpenCreateForm} />
       <Container style={{ marginTop: '7em' }}>
-        <ActivityDashboard 
-          activities={activities} 
+        <ActivityDashboard
+          activities={activities}
           selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
           isEditing={isEditing}
