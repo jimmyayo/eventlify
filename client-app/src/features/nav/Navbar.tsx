@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Menu, Container, Button } from 'semantic-ui-react';
+import ActivityStore from '../../app/stores/activityStore';
+import { observer } from 'mobx-react-lite';
 
-interface IProps {
-   openCreateForm: () => void;
-}
 
-const Navbar: React.FC<IProps> = ({openCreateForm}) => {
+const Navbar: React.FC = () => {
+   const activityStore = useContext(ActivityStore);
+
    return (
       <Menu inverted fixed='top'>
          <Container>
@@ -16,7 +17,7 @@ const Navbar: React.FC<IProps> = ({openCreateForm}) => {
             </Menu.Item>
             <Menu.Item name='Activities' />
             <Menu.Item>
-               <Button onClick={openCreateForm} positive content='Create Activity' />
+               <Button onClick={activityStore.openCreateForm} positive content='Create Activity' />
             </Menu.Item>
          </Container>
 
@@ -24,4 +25,4 @@ const Navbar: React.FC<IProps> = ({openCreateForm}) => {
    )
 };
 
-export default Navbar;
+export default observer(Navbar);
