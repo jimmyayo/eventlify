@@ -7,10 +7,8 @@ configure({ enforceActions: 'always' });
 
 class ActivityStore {
    @observable activityRegistry = new Map();
-   @observable activities: IActivity[] = [];
    @observable activity: IActivity | null = null;
    @observable loadingInitial = false;
-   @observable isEditing = false;
    @observable isSubmitting = false;
    @observable target = '';
 
@@ -27,10 +25,9 @@ class ActivityStore {
             activities.forEach(activity => {
                activity.date = activity.date.split('.')[0];
                this.activityRegistry.set(activity.id, activity);
+               this.loadingInitial = false;
             });
          });
-
-         this.loadingInitial = false;
       } catch (error) {
          runInAction('load activities error', () => this.loadingInitial = false);
          console.log(error);
@@ -67,7 +64,6 @@ class ActivityStore {
 
    @action selectActivity = (id: string) => {
       this.activity = this.activityRegistry.get(id);
-      this.isEditing = false;
    };
 
    @action createActivity = async (activity: IActivity) => {
@@ -76,14 +72,11 @@ class ActivityStore {
          await agent.Activities.create(activity);
          runInAction('creating activity', () => {
             this.activityRegistry.set(activity.id, activity);
-            this.activities.push(activity);
-            this.isEditing = false;
             this.isSubmitting = false;
          })
       } catch (error) {
          console.log(error);
          runInAction('error creating activity', () => {
-            this.isEditing = false;
             this.isSubmitting = false;
          })
       }
@@ -97,11 +90,9 @@ class ActivityStore {
             this.activityRegistry.set(activity.id, activity);
             this.activity = activity;
             this.isSubmitting = false;
-            this.isEditing = false;
          });
       } catch (error) {
          runInAction('error editing activity', () => {
-            this.isEditing = false;
             this.isSubmitting = false;
          });
          console.log(error);
@@ -127,23 +118,6 @@ class ActivityStore {
       }
    };
 
-   @action openEditForm = (id: string) => {
-      this.activity = this.activityRegistry.get(id);
-      this.isEditing = true;
-   };
-
-   @action cancelSelectedActivity = () => {
-      this.activity = null;
-   };
-
-   @action cancelEditOpen = () => {
-      this.isEditing = false;
-   };
-
-   @action openCreateForm = () => {
-      this.isEditing = true;
-      this.activity = null;
-   };
 }
 
 export default createContext(new ActivityStore());

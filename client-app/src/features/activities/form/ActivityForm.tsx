@@ -17,7 +17,6 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
       editActivity, 
       loadActivity,
       isSubmitting, 
-      cancelEditOpen, 
       clearActivity,
       activity: initialFormState 
    } = activityStore;
@@ -99,7 +98,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                name='venue'
                value={activity.venue} />
             <Button floated='right' positive type='submit' content='Submit' loading={isSubmitting} />
-            <Button onClick={() => cancelEditOpen()} floated='right' type='button' content='Cancel' />
+            <Button onClick={() => history.push('/activities')} floated='right' type='button' content='Cancel' />
          </Form>
       </Segment>
    )

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const ActivityList = () => {
    const activityStore = useContext(ActivityStore);
-   const { activitiesByDate, selectActivity, deleteActivity, isSubmitting, target } = activityStore;
+   const { activitiesByDate, deleteActivity, isSubmitting, target } = activityStore;
    return (
       <Segment clearing>
          <Item.Group divided>
