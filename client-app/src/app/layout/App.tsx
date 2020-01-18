@@ -11,7 +11,7 @@ import HomePage from '../../features/home/HomePage';
 import ActivityForm from '../../features/activities/form/ActivityForm';
 import ActivityDetails from '../../features/activities/details/ActivityDetails';
 
-const App: React.FC<RouteComponentProps> = ({location}) => {
+const App: React.FC<RouteComponentProps> = ({ location }) => {
   const activityStore = useContext(ActivityStore);
 
   useEffect(() => {
@@ -22,17 +22,22 @@ const App: React.FC<RouteComponentProps> = ({location}) => {
 
   return (
     <>
-      <Navbar />
-      <Container style={{ marginTop: '7em' }}>
-        {/* <ActivityDashboard /> */}
-        <Route exact path='/' component={HomePage} />
-        <Route exact path='/activities/' component={ActivityDashboard} />
-        <Route exact path='/activities/:id' component={ActivityDetails} />
-        <Route exact 
-          key={location.key} 
-          path={['/createActivity', '/manage/:id']} 
-          component={ActivityForm} />
-      </Container>
+
+      <Route exact path='/' component={HomePage} />
+      <Route path={'/(.+)'} render={() => (
+        <>
+          <Navbar />
+          <Container style={{ marginTop: '7em' }}>
+            <Route exact path='/activities/' component={ActivityDashboard} />
+            <Route exact path='/activities/:id' component={ActivityDetails} />
+            <Route exact
+              key={location.key}
+              path={['/createActivity', '/manage/:id']}
+              component={ActivityForm} />
+          </Container>
+        </>
+      )} />
+
     </>
   );
 }
