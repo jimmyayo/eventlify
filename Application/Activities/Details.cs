@@ -5,6 +5,7 @@ using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
 using Persistence;
+using Application.Errors;
 
 namespace Application.Activities
 {
@@ -26,6 +27,9 @@ namespace Application.Activities
          public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
          {
             var activity = await _context.Activities.FindAsync(request.Id);
+            // if (activity == null)
+            //    throw new RestException()
+
             return activity;
          }
       }
