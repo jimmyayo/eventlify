@@ -31,7 +31,10 @@ namespace API.Middleware
          }
       }
 
-      private async Task HandleExceptionAsync(HttpContext context, Exception ex, ILogger<ErrorHandlingMiddleware> logger)
+      private async Task HandleExceptionAsync(
+         HttpContext context, 
+         Exception ex, 
+         ILogger<ErrorHandlingMiddleware> logger)
       {
          object errors = null;
 

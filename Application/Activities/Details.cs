@@ -1,3 +1,4 @@
+using System.Net;
 using System.Collections;
 using System;
 using Domain;
@@ -27,8 +28,8 @@ namespace Application.Activities
          public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
          {
             var activity = await _context.Activities.FindAsync(request.Id);
-            // if (activity == null)
-            //    throw new RestException()
+            if (activity == null)
+               throw new RestException(HttpStatusCode.NotFound, new { activity="Not found"});
 
             return activity;
          }
