@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.min.css';
 import {createBrowserHistory} from 'history';
 import './app/layout/styles.css';
 import App from './app/layout/App';
