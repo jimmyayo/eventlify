@@ -13,29 +13,32 @@ interface DetailParams {
    id: string
 }
 
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> =
+   ({ match, history }) => {
 
-   const activityStore = useContext(ActivityStore);
-   const {activity, loadActivity, loadingInitial } = activityStore;
+      const activityStore = useContext(ActivityStore);
+      const { activity, loadActivity, loadingInitial } = activityStore;
 
-   useEffect(() => {
-      loadActivity(match.params.id)
-   }, [loadActivity, match.params.id]);
+      useEffect(() => {
+         loadActivity(match.params.id)
+      }, [loadActivity, match.params.id, history]);
 
-   if (loadingInitial || !activity) return <LoadingComponent content='Loading activity...' />
+      if (loadingInitial) return <LoadingComponent content='Loading activity...' />;
 
-   return (
-      <Grid>
-         <Grid.Column width={10}>
-            <ActivityDetailedHeader activity={activity} />
-            <ActivityDetailedInfo activity={activity} />
-            <ActivityDetailedChat />
-         </Grid.Column>
-         <Grid.Column width={6}>
-            <ActivityDetailedSidebar />
-         </Grid.Column>
-      </Grid>
-   )
-}
+      if (!activity) return <h2>Activity Not Found.</h2>;
+
+      return (
+         <Grid>
+            <Grid.Column width={10}>
+               <ActivityDetailedHeader activity={activity} />
+               <ActivityDetailedInfo activity={activity} />
+               <ActivityDetailedChat />
+            </Grid.Column>
+            <Grid.Column width={6}>
+               <ActivityDetailedSidebar />
+            </Grid.Column>
+         </Grid>
+      )
+   }
 
 export default observer(ActivityDetails);
