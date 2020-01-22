@@ -8,6 +8,9 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Form as FinalForm, Field } from 'react-final-form';
 import TextInput from '../../../app/common/form/TextInput';
 import TextAreaInput from '../../../app/common/form/TextAreaInput';
+import SelectInput from '../../../app/common/form/SelectInput';
+import DateInput from '../../../app/common/form/DateInput';
+import { category } from '../../../features/activities/form/options/categoryOptions';
 
 interface DetailParams {
    id: string;
@@ -32,7 +35,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
          description: '',
          city: '',
          category: '',
-         date: '',
+         date: null,
          venue: ''
       }
    );
@@ -46,7 +49,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
          clearActivity();
       }
    }, [loadActivity, clearActivity, match.params.id, initialFormState, activity.id.length]);
- 
+
 
    // const handleSubmit = () => {
    //    if (activity.id.length === 0) {
@@ -80,18 +83,19 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                            placeholder='Description'
                            name='description'
                            rows={3}
-                           value={activity.description} 
+                           value={activity.description}
                            component={TextAreaInput} />
                         <Field
-                           component={TextInput}
+                           component={SelectInput}
                            placeholder='Category'
                            name='category'
-                           value={activity.category} />
+                           value={activity.category}
+                           options={category} />
                         <Field
-                           component={TextInput}
+                           component={DateInput}
                            placeholder='Date'
                            name='date'
-                           value={activity.date} />
+                           value={activity.date!} />
                         <Field
                            component={TextInput}
                            placeholder='City'
