@@ -26,7 +26,7 @@ const ActivityListItem: React.FC<{ activity: IActivity }> = ({ activity }) => {
 
          </Segment>
          <Segment>
-            <Icon name='clock' />{format(activity.date!, 'h:mm a')}
+            <Icon name='clock' />{format(activity.date, 'h:mm a')}
             <Icon name='marker' />{activity.venue}
          </Segment>
          <Segment secondary>
