@@ -1,6 +1,6 @@
 import { observable, action, computed, configure, runInAction } from 'mobx';
 import { createContext, SyntheticEvent } from 'react';
-import { IActivity } from '../models/activity';
+import { IActivity, IActivityFormValues } from '../models/activity';
 import agent from '../api/agent';
 
 configure({ enforceActions: 'always' });
@@ -19,12 +19,12 @@ class ActivityStore {
    groupActivitiesByDate(activities: IActivity[]) {
       const sortedActivities = activities.sort(
          (a, b) => a.date.getTime() - b.date.getTime());
-      
+
       return Object.entries(sortedActivities.reduce((activities, activity) => {
          const date = activity.date.toISOString().split('T')[0];
-         activities[date] = activities[date] ? [...activities[date], activity]: [activity];
+         activities[date] = activities[date] ? [...activities[date], activity] : [activity];
          return activities;
-      }, {} as {[key: string] : IActivity[]}));
+      }, {} as { [key: string]: IActivity[] }));
 
    }
 
@@ -39,7 +39,7 @@ class ActivityStore {
                this.loadingInitial = false;
             });
          });
-         
+
       } catch (error) {
          runInAction('load activities error', () => this.loadingInitial = false);
          console.log(error);
@@ -50,8 +50,9 @@ class ActivityStore {
       let activity = this.getActivityFromRegistry(id);
       if (activity) {
          this.activity = activity;
+         return activity;
       } else {
-         // couldn't retrieve activity from registry, try retrieving from api
+         // couldn't retrieve activity from local registry, so retrieve from api
          this.loadingInitial = true;
          try {
             activity = await agent.Activities.details(id);
@@ -60,6 +61,7 @@ class ActivityStore {
                this.activity = activity;
                this.loadingInitial = false;
             })
+            return activity;
          } catch (error) {
             runInAction('error getting activity', () => this.loadingInitial = false);
             console.log(error);
@@ -134,3 +136,22 @@ class ActivityStore {
 }
 
 export default createContext(new ActivityStore());
+
+export class ActivityFormValues implements IActivityFormValues {
+   id?: string = undefined;
+   title?: string = '';
+   description?: string = '';
+   city?: string = '';
+   category?: string = '';
+   date?: Date = undefined;
+   time?: Date = undefined;
+   venue?: string = '';
+
+   constructor(init?: IActivityFormValues) {
+      if (init && init.date) {
+         init.time = init.date;
+      }
+      Object.assign(this, init);
+
+   }
+}
