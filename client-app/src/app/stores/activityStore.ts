@@ -2,6 +2,8 @@ import { observable, action, computed, configure, runInAction } from 'mobx';
 import { createContext, SyntheticEvent } from 'react';
 import { IActivity, IActivityFormValues } from '../models/activity';
 import agent from '../api/agent';
+import { history } from '../..';
+import { toast } from 'react-toastify';
 
 configure({ enforceActions: 'always' });
 
@@ -59,6 +61,7 @@ class ActivityStore {
             runInAction('getting activity', () => {
                activity.date = new Date(activity.date);
                this.activity = activity;
+               this.activityRegistry.set(activity.id, activity);
                this.loadingInitial = false;
             })
             return activity;
@@ -88,12 +91,14 @@ class ActivityStore {
          runInAction('creating activity', () => {
             this.activityRegistry.set(activity.id, activity);
             this.isSubmitting = false;
-         })
+         });
+         history.push(`/activities/${activity.id}`);
       } catch (error) {
-         console.log(error);
          runInAction('error creating activity', () => {
             this.isSubmitting = false;
-         })
+         });
+         toast.error('Problem submitting data');
+         console.log(error.response);
       }
    };
 
@@ -106,11 +111,13 @@ class ActivityStore {
             this.activity = activity;
             this.isSubmitting = false;
          });
+         history.push(`/activities/${activity.id}`);
       } catch (error) {
          runInAction('error editing activity', () => {
             this.isSubmitting = false;
          });
-         console.log(error);
+         toast.error('Problem submitting data');
+         console.log(error.response);
       }
    };
 
@@ -123,12 +130,12 @@ class ActivityStore {
             this.activityRegistry.delete(id);
             this.isSubmitting = false;
             this.target = '';
-         })
+         });
       } catch (error) {
          runInAction('deleting activity', () => {
             this.isSubmitting = false;
             this.target = '';
-         })
+         });
          console.log(error);
       }
    };

@@ -12,6 +12,20 @@ import SelectInput from '../../../app/common/form/SelectInput';
 import DateInput from '../../../app/common/form/DateInput';
 import { combineDateAndTime } from '../../../app/common/util/util';
 import { category } from '../../../features/activities/form/options/categoryOptions';
+import {combineValidators, isRequired, composeValidators, hasLengthGreaterThan} from 'revalidate';
+
+const validate = combineValidators({
+   title: isRequired({message: 'Event title is required'}),
+   category: isRequired('Category'),
+   description: composeValidators(
+      isRequired('Description'),
+      hasLengthGreaterThan(4)({message: 'Description must be at least 5 characters'})
+   )(),
+   city: isRequired('city'),
+   venue: isRequired('Venue'),
+   date: isRequired('Date'),
+   time: isRequired('Time')
+});
 
 interface DetailParams {
    id: string;
@@ -48,23 +62,20 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
       match.params.id
    ]);
 
-
-   // const handleSubmit = () => {
-   //    if (activity.id.length === 0) {
-   //       let newActivity: IActivity = { ...activity, id: uuid() };
-   //       createActivity(newActivity).then(() =>
-   //          history.push(`/activities/${newActivity.id}`));
-   //    } else {
-   //       editActivity(activity).then(() =>
-   //          history.push(`/activities/${activity.id}`))
-   //    }
-   // };
-
    const handleFinalFormSubmit = (values: any) => {
       const dateAndTime = combineDateAndTime(values.date, values.time);
       const { date, time, ...activity } = values;
       activity.date = dateAndTime;
-      console.log(activity);
+
+      if (!activity.id) {
+         let newActivity = {
+            ...activity,
+            id: uuid()
+         };
+         createActivity(newActivity);
+      } else {
+         editActivity(activity);
+      }
    }
 
    return (
@@ -72,9 +83,14 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
          <Grid.Column width={10}>
             <Segment clearing>
                <FinalForm
+                  validate={validate}
                   initialValues={activity}
                   onSubmit={handleFinalFormSubmit}
-                  render={({ handleSubmit }) => (
+                  render={({ 
+                     handleSubmit,
+                     invalid,
+                     pristine
+                   }) => (
                      <Form onSubmit={handleSubmit} loading={isLoading}>
                         <Field
                            placeholder='Title'
@@ -117,8 +133,22 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                            placeholder='Venue'
                            name='venue'
                            value={activity.venue} />
-                        <Button disabled={isLoading} floated='right' positive type='submit' content='Submit' loading={isSubmitting} />
-                        <Button disabled={isLoading} onClick={() => history.push('/activities')} floated='right' type='button' content='Cancel' />
+                        <Button
+                           disabled={isLoading || invalid || pristine}
+                           floated='right'
+                           positive
+                           type='submit'
+                           content='Submit'
+                           loading={isSubmitting} />
+                        <Button
+                           disabled={isLoading}
+                           onClick={activity.id ?
+                              () => history.push(`/activities/${activity.id}`)
+                              :
+                              () => history.push('/activities')}
+                           floated='right'
+                           type='button'
+                           content='Cancel' />
                      </Form>
                   )} />
 
