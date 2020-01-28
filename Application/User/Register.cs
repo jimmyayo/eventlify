@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Application.Validators;
 
 namespace Application.User
 {
@@ -30,8 +31,8 @@ namespace Application.User
          {
             RuleFor(x => x.DisplayName).NotEmpty();
             RuleFor(x => x.UserName).NotEmpty();
-            RuleFor(x => x.Email).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty();
+            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.Password).Password();
          }
       }
 
