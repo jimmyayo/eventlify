@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Activities;
 using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -14,32 +15,33 @@ namespace API.Controllers
       [HttpGet]
       public async Task<ActionResult<List<Activity>>> List()
       {
-          return await Mediator.Send(new List.Query());
+         return await Mediator.Send(new List.Query());
       }
 
+      [Authorize]
       [HttpGet("{id}")]
       public async Task<ActionResult<Activity>> Details(Guid id)
       {
-          return await Mediator.Send(new Details.Query{Id = id});
+         return await Mediator.Send(new Details.Query { Id = id });
       }
-    
+
       [HttpPost]
       public async Task<ActionResult<Unit>> Create(Create.Command command)
       {
-          return await Mediator.Send(command);
+         return await Mediator.Send(command);
       }
 
       [HttpPut("{Id}")]
       public async Task<ActionResult<Unit>> Edit(Guid Id, Edit.Command command)
       {
-          command.Id = Id;
-          return await Mediator.Send(command);
+         command.Id = Id;
+         return await Mediator.Send(command);
       }
 
       [HttpDelete("{Id}")]
       public async Task<ActionResult<Unit>> Delete(Guid id)
       {
-          return await Mediator.Send(new Delete.Command{Id = id});
+         return await Mediator.Send(new Delete.Command { Id = id });
       }
 
    }

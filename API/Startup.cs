@@ -13,72 +13,100 @@ using Domain;
 using Microsoft.AspNetCore.Identity;
 using Infrastructure.Security;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace API
 {
    public class Startup
-    {
-        public Startup(IConfiguration configuration)
+   {
+      public Startup(IConfiguration configuration)
+      {
+         Configuration = configuration;
+      }
+
+      public IConfiguration Configuration { get; }
+
+      // This method gets called by the runtime. Use this method to add services to the container.
+      public void ConfigureServices(IServiceCollection services)
+      {
+         services.AddControllers(opt =>
+         {
+            var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            opt.Filters.Add(new AuthorizeFilter(policy));
+         })
+        .AddFluentValidation(cfg =>
         {
-            Configuration = configuration;
-        }
+           cfg.RegisterValidatorsFromAssemblyContaining<Create>();
+        });
 
-        public IConfiguration Configuration { get; }
+         services.AddDbContext<DataContext>(opt =>
+         {
+            opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+         });
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers()
-                .AddFluentValidation(cfg => {
-                    cfg.RegisterValidatorsFromAssemblyContaining<Create>();
-                });
-
-            services.AddDbContext<DataContext>(opt => {
-                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            // Need to add CorsPolicy so the ReactUI can receive responses from WebAPI, which is 
-            // running on different host/port
-            services.AddCors(opt => {
-                opt.AddPolicy("CorsPolicy", policy => {
-                    policy.AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .WithOrigins("http://localhost:3000");
-                });
-            });
-            services.AddMediatR(typeof(List.Handler).Assembly);
-
-            var builder = services.AddIdentityCore<AppUser>();
-            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
-            identityBuilder.AddEntityFrameworkStores<DataContext>();
-            identityBuilder.AddSignInManager<SignInManager<AppUser>>();
-
-            services.AddAuthentication();
-            //services.TryAddSingleton<ISystemClock, SystemClock>();
-            services.AddScoped<IJwtGenerator, JwtGenerator>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            app.UseMiddleware<ErrorHandlingMiddleware>();
-            if (env.IsDevelopment())
+         // Need to add CorsPolicy so the ReactUI can receive responses from WebAPI, which is 
+         // running on different host/port
+         services.AddCors(opt =>
+         {
+            opt.AddPolicy("CorsPolicy", policy =>
             {
-                //app.UseDeveloperExceptionPage();
-            }
-
-            // app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseCors("CorsPolicy");
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
+               policy.AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .WithOrigins("http://localhost:3000");
             });
-        }
-    }
+         });
+         services.AddMediatR(typeof(List.Handler).Assembly);
+
+         var builder = services.AddIdentityCore<AppUser>();
+         var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+         identityBuilder.AddEntityFrameworkStores<DataContext>();
+         identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+
+         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+             .AddJwtBearer(opt =>
+             {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = key,
+                   ValidateAudience = false,
+                   ValidateIssuer = false
+                };
+             });
+         //services.TryAddSingleton<ISystemClock, SystemClock>();
+         services.AddScoped<IJwtGenerator, JwtGenerator>();
+      }
+
+      // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+      public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+      {
+         app.UseMiddleware<ErrorHandlingMiddleware>();
+         if (env.IsDevelopment())
+         {
+            //app.UseDeveloperExceptionPage();
+         }
+
+         // app.UseHttpsRedirection();
+
+         app.UseRouting();
+
+         app.UseCors("CorsPolicy");
+
+         app.UseAuthentication();
+
+         app.UseAuthorization();
+
+
+         app.UseEndpoints(endpoints =>
+         {
+            endpoints.MapControllers();
+         });
+      }
+   }
 }
