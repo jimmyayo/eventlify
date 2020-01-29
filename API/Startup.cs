@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using AutoMapper;
 
 namespace API
 {
@@ -60,6 +61,7 @@ namespace API
             });
          });
          services.AddMediatR(typeof(List.Handler).Assembly);
+         services.AddAutoMapper(typeof(List.Handler).Assembly);
 
          var builder = services.AddIdentityCore<AppUser>();
          var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
