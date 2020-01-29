@@ -1,5 +1,4 @@
 import {RootStore} from './rootStore';
-import UserStore from './userStore';
 import { observable, action, reaction } from 'mobx';
 
 export default class CommonStore {
