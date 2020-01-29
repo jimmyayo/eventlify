@@ -10,18 +10,21 @@ import ErrorMessage from '../../app/common/form/ErrorMessage';
 
 const validate = combineValidators({
    email: isRequired('email'),
+   username: isRequired('username'),
+   displayname: isRequired('displayname'),
    password: isRequired('password')
 });
 
-const LoginForm = () => {
+const RegisterForm = () => {
    const rootStore = useContext(RootStoreContext);
-   const { login } = rootStore.userStore;
+   const { register } = rootStore.userStore;
 
    return (
       <FinalForm
-         validate={validate}
-         onSubmit={(values: IUserFormValues) => login(values).catch(error => ({
-            [FORM_ERROR]: error
+         //validate={validate}
+         onSubmit={(values: IUserFormValues) => 
+            register(values).catch(error => ({
+               [FORM_ERROR]: error
          }))}
          render={(
             {
@@ -33,16 +36,26 @@ const LoginForm = () => {
                dirtySinceLastSubmit
             }) => (
                <Form onSubmit={handleSubmit} error>
-                  <Header as='h2' content='Login to Eventlify' color='teal' textAlign='center' />
+                  <Header as='h2' content='Sign up for Eventlify' color='teal' textAlign='center' />
                   <Field
                      name='email'
                      component={TextInput}
                      placeholder='email'
                   />
                   <Field
+                     name='username'
+                     component={TextInput}
+                     placeholder='Username'
+                  />
+                  <Field
+                     name='displayname'
+                     component={TextInput}
+                     placeholder='Display Name'
+                  />
+                  <Field
                      name='password'
                      component={TextInput}
-                     placeholder='password'
+                     placeholder='Password'
                      type='password'
                   />
                   {submitError && !dirtySinceLastSubmit && 
@@ -56,10 +69,10 @@ const LoginForm = () => {
                      disabled={invalid && !dirtySinceLastSubmit || pristine} 
                      loading={submitting} 
                      color='teal' 
-                     content='Login' />
+                     content='Register' />
                </Form>
             )} />
    )
 }
 
-export default LoginForm;
+export default RegisterForm;
