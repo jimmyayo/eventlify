@@ -31,6 +31,7 @@ namespace API.Controllers
          return await Mediator.Send(command);
       }
 
+      [Authorize(Policy = "IsActivityHost")]
       [HttpPut("{Id}")]
       public async Task<ActionResult<Unit>> Edit(Guid Id, Edit.Command command)
       {
@@ -38,6 +39,7 @@ namespace API.Controllers
          return await Mediator.Send(command);
       }
 
+      [Authorize(Policy = "IsActivityHost")]
       [HttpDelete("{Id}")]
       public async Task<ActionResult<Unit>> Delete(Guid id)
       {
@@ -53,7 +55,7 @@ namespace API.Controllers
       [HttpDelete("{Id}/attend")]
       public async Task<ActionResult<Unit>> Unattend(Guid id)
       {
-         return await Mediator.Send(new Unattend.Command {Id = id});
+         return await Mediator.Send(new Unattend.Command { Id = id });
       }
 
    }
