@@ -4,7 +4,8 @@ import { IActivity, IActivityFormValues } from '../models/activity';
 import agent from '../api/agent';
 import { history } from '../..';
 import { toast } from 'react-toastify';
-import { RootStore} from './rootStore';
+import { RootStore } from './rootStore';
+import { setActivityProps } from '../common/util/util';
 
 
 export default class ActivityStore {
@@ -37,11 +38,20 @@ export default class ActivityStore {
 
    @action loadActivities = async () => {
       this.loadingInitial = true;
+
+      const user = this.rootStore.userStore.user;
+      console.log(user);
+      
       try {
          const activities = await agent.Activities.list();
          runInAction('loading activities', () => {
             activities.forEach(activity => {
+               //setActivityProps(activity, user!);
+               console.log(user);
                activity.date = new Date(activity.date);
+               activity.isGoing = activity.attendees.some(a => a.username === user?.username);
+               activity.isHost = activity.attendees.some(a => a.username === user?.username && a.isHost);
+
                this.activityRegistry.set(activity.id, activity);
                this.loadingInitial = false;
             });
@@ -55,6 +65,8 @@ export default class ActivityStore {
 
    @action loadActivity = async (id: string) => {
       let activity = this.getActivityFromRegistry(id);
+      const user = this.rootStore.userStore.user;
+
       if (activity) {
          this.activity = activity;
          return activity;
@@ -64,7 +76,11 @@ export default class ActivityStore {
          try {
             activity = await agent.Activities.details(id);
             runInAction('getting activity', () => {
-               activity.date = new Date(activity.date);
+               setActivityProps(activity, user!);
+               //activity.date = new Date(activity.date);
+               // activity.isGoing = activity.attendees.some(a => a.username === user?.username);
+               // activity.isHost = activity.attendees.some(a => a.username === user?.username && a.isHost);
+
                this.activity = activity;
                this.activityRegistry.set(activity.id, activity);
                this.loadingInitial = false;

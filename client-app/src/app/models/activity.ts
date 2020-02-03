@@ -5,9 +5,19 @@ export interface IActivity {
    category: string;
    date: Date;
    city: string;
-   venue: string
+   venue: string;
+   isGoing: boolean;
+   isHost: boolean;
+   attendees: IAttendee[];
 }
 
 export interface IActivityFormValues extends Partial<IActivity> {
    time?: Date
+}
+
+export interface IAttendee {
+   username: string;
+   displayName: string;
+   image: string;
+   isHost: boolean;
 }

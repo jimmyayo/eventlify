@@ -19,7 +19,7 @@ export default class UserStore {
          const user = await agent.User.login(values);
          runInAction(() => {
             this.user = user;
-         })
+         });
          this.rootStore.commonStore.setToken(user.token);
          this.rootStore.modalStore.closeModal();
          history.push('/activities');
@@ -33,7 +33,7 @@ export default class UserStore {
          const user = await agent.User.current();
          runInAction(() => {
             this.user = user;
-         })
+         });
       } catch (error) {
          console.log(error);
       }
