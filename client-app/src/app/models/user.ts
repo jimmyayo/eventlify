@@ -1,5 +1,5 @@
 export interface IUser {
-   username: string;
+   userName: string;
    displayName: string;
    token: string;
    image?: string;
@@ -11,3 +11,5 @@ export interface IUserFormValues {
    displayName?: string;
    userName?: string;
 }
+
+export var global: Global = { user: null};

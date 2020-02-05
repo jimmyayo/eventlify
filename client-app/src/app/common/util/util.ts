@@ -12,12 +12,22 @@ export const combineDateAndTime = (date: Date, time: Date) => {
 }
 
 export const setActivityProps = (activity: IActivity, user: IUser) => {
-   console.log(user);
-   console.log(activity.attendees);
+   //console.log(activity.attendees);
+   activity.attendees.map(a => {
+      console.log(a.userName);
+      console.log(a.isHost);
+   })
+   console.log(user.userName);
 
    activity.date = new Date(activity.date);
-   activity.isGoing = activity.attendees.some(a => a.username === user?.username);
-   activity.isHost = activity.attendees.some(a => a.username === user?.username && a.isHost);
+   const going = activity.attendees.some(a => a.userName === user.userName);
+   //console.log(going);
+   activity.isGoing = going;
 
+   const hosting = activity.attendees.some(a => a.isHost && a.userName === user.userName);
+   activity.isHost = hosting;
+   //console.log(hosting);
+
+   console.log(`IsGoing: ${activity.isGoing}. IsHost: ${activity.isHost}`);
    return activity;
 }

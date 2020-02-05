@@ -1,12 +1,12 @@
 import { observable, action, computed, runInAction } from 'mobx';
 import { SyntheticEvent } from 'react';
 import { IActivity, IActivityFormValues } from '../models/activity';
+import { global } from '../models/user';
 import agent from '../api/agent';
 import { history } from '../..';
 import { toast } from 'react-toastify';
 import { RootStore } from './rootStore';
 import { setActivityProps } from '../common/util/util';
-
 
 export default class ActivityStore {
    rootStore: RootStore;
@@ -39,19 +39,17 @@ export default class ActivityStore {
    @action loadActivities = async () => {
       this.loadingInitial = true;
 
+      // temporary workaround /hack!
+      //const {user} = global;
       const user = this.rootStore.userStore.user;
-      console.log(user);
+      
       
       try {
          const activities = await agent.Activities.list();
          runInAction('loading activities', () => {
             activities.forEach(activity => {
-               //setActivityProps(activity, user!);
-               console.log(user);
-               activity.date = new Date(activity.date);
-               activity.isGoing = activity.attendees.some(a => a.username === user?.username);
-               activity.isHost = activity.attendees.some(a => a.username === user?.username && a.isHost);
-
+               // console.log(user);
+               setActivityProps(activity, user!);
                this.activityRegistry.set(activity.id, activity);
                this.loadingInitial = false;
             });
@@ -65,6 +63,9 @@ export default class ActivityStore {
 
    @action loadActivity = async (id: string) => {
       let activity = this.getActivityFromRegistry(id);
+
+      // temporary workaround /hack!
+      //const {user} = global;
       const user = this.rootStore.userStore.user;
 
       if (activity) {
@@ -77,10 +78,6 @@ export default class ActivityStore {
             activity = await agent.Activities.details(id);
             runInAction('getting activity', () => {
                setActivityProps(activity, user!);
-               //activity.date = new Date(activity.date);
-               // activity.isGoing = activity.attendees.some(a => a.username === user?.username);
-               // activity.isHost = activity.attendees.some(a => a.username === user?.username && a.isHost);
-
                this.activity = activity;
                this.activityRegistry.set(activity.id, activity);
                this.loadingInitial = false;

@@ -1,8 +1,9 @@
 import { observable, computed, action, runInAction } from 'mobx';
-import { IUser, IUserFormValues } from '../models/user';
+import { IUser, IUserFormValues, global } from '../models/user';
 import agent from '../api/agent';
 import { RootStore } from './rootStore';
 import { history } from '../..';
+// import { global } from '../../global';
 
 export default class UserStore {
    rootStore: RootStore;
@@ -19,6 +20,8 @@ export default class UserStore {
          const user = await agent.User.login(values);
          runInAction(() => {
             this.user = user;
+            // TEMP WORKAROUND!
+            global.user = user;
          });
          this.rootStore.commonStore.setToken(user.token);
          this.rootStore.modalStore.closeModal();
@@ -30,9 +33,12 @@ export default class UserStore {
 
    @action getUser = async () => {
       try {
+         console.log(' in getUser()');
          const user = await agent.User.current();
          runInAction(() => {
             this.user = user;
+            // TEMP WORKAROUND!
+            global.user = user;
          });
       } catch (error) {
          console.log(error);

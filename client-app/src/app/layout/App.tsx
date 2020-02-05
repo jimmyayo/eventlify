@@ -24,7 +24,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
     if (token) {
       getUser().finally(() => setAppLoaded());
     } else {
-      getUser();
+      //getUser();
       setAppLoaded();
     }
   },

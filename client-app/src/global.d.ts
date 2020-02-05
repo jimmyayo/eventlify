@@ -1,0 +1,4 @@
+interface Global {
+   user: any;
+}
+

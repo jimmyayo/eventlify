@@ -16,7 +16,7 @@ export interface IActivityFormValues extends Partial<IActivity> {
 }
 
 export interface IAttendee {
-   username: string;
+   userName: string;
    displayName: string;
    image: string;
    isHost: boolean;
