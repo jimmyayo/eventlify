@@ -79,7 +79,6 @@ namespace API
          });
          services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
-
          var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
 
          services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -96,6 +95,7 @@ namespace API
          //services.TryAddSingleton<ISystemClock, SystemClock>();
          services.AddScoped<IJwtGenerator, JwtGenerator>();
          services.AddScoped<IUserAccessor, UserAccessor>();
+         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
          services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
       }
 
