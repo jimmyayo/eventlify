@@ -9,43 +9,51 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-public class Command : IRequest<Photo>
+namespace Application.Photos
 {
-   public IFormFile File { get; set; }
-}
-
-public class Handler : IRequestHandler<Command, Photo>
-{
-   private readonly DataContext _context;
-   private readonly IUserAccessor _userAccessor;
-   private readonly IPhotoAccessor _photoAccessor;
-   public Handler(DataContext context, IUserAccessor userAccessor, IPhotoAccessor photoAccessor)
+   public class Add
    {
-      _photoAccessor = photoAccessor;
-      _userAccessor = userAccessor;
-      _context = context;
-   }
-   public async Task<Photo> Handle(Command request, CancellationToken cancellationToken)
-   {
-      var photoUploadResult = _photoAccessor.AddPhoto(request.File);
-
-      var user = await _context.Users.SingleOrDefaultAsync(u => u.UserName == _userAccessor.GetCurrentUsername());
-
-      var photo = new Photo
+      public class Command : IRequest<Photo>
       {
-         Url = photoUploadResult.Url,
-         Id = photoUploadResult.PublicId
-      };
+         public IFormFile File { get; set; }
+      }
 
-      if (!user.Photos.Any(p => p.IsMain)) 
-         photo.IsMain = true;
-      
-      user.Photos.Add(photo);
-      // handler logic goes here
-      var success = await _context.SaveChangesAsync() > 0;
+      public class Handler : IRequestHandler<Command, Photo>
+      {
+         private readonly DataContext _context;
+         private readonly IUserAccessor _userAccessor;
+         private readonly IPhotoAccessor _photoAccessor;
+         public Handler(DataContext context, IUserAccessor userAccessor, IPhotoAccessor photoAccessor)
+         {
+            _photoAccessor = photoAccessor;
+            _userAccessor = userAccessor;
+            _context = context;
+         }
+         public async Task<Photo> Handle(Command request, CancellationToken cancellationToken)
+         {
+            var photoUploadResult = _photoAccessor.AddPhoto(request.File);
 
-      if (success) return photo;
+            var user = await _context.Users.SingleOrDefaultAsync(
+               u => u.UserName == _userAccessor.GetCurrentUsername());
 
-      throw new Exception("Problem saving photo");
+            var photo = new Photo
+            {
+               Url = photoUploadResult.Url,
+               Id = photoUploadResult.PublicId
+            };
+
+            if (!user.Photos.Any(p => p.IsMain))
+               photo.IsMain = true;
+
+            user.Photos.Add(photo);
+            // handler logic goes here
+            var success = await _context.SaveChangesAsync() > 0;
+
+            if (success) return photo;
+
+            throw new Exception("Problem saving photo");
+         }
+      }
    }
+
 }

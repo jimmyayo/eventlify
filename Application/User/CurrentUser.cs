@@ -14,7 +14,6 @@ namespace Application.User
 
       public class Handler : IRequestHandler<Query, User>
       {
-         private DataContext _context;
          private readonly UserManager<AppUser> _userManager;
          private readonly IJwtGenerator _jwtGenerator;
          private readonly IUserAccessor _userAccessor;
