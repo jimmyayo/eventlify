@@ -6,7 +6,7 @@ import PhotoUploadWidget from '../../app/common/photoUpload/PhotoUploadWidget';
 const ProfilePhotos = () => {
 
    const rootStore = useContext(RootStoreContext);
-   const { profile, isCurrentUser } = rootStore.profileStore;
+   const { profile, isCurrentUser, uploadPhoto, isUploading } = rootStore.profileStore;
 
    const [isAddPhotoMode, setIsAddPhotoMode] = useState(true);
 
