@@ -1,7 +1,6 @@
 import { observable, action, computed, runInAction } from 'mobx';
 import { SyntheticEvent } from 'react';
 import { IActivity, IActivityFormValues } from '../models/activity';
-import { global } from '../models/user';
 import agent from '../api/agent';
 import { history } from '../..';
 import { toast } from 'react-toastify';

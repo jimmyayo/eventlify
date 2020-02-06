@@ -7,11 +7,12 @@ import { observer } from 'mobx-react-lite';
 const ProfilePhotos = () => {
 
    const rootStore = useContext(RootStoreContext);
-   const { profile, isCurrentUser, uploadPhoto, isUploading, 
-      setMainPhoto, isLoading } = rootStore.profileStore;
+   const { profile, isCurrentUser, uploadPhoto, isUploading,
+      setMainPhoto, isLoading, isDeleting, deletePhoto } = rootStore.profileStore;
 
    const [isAddPhotoMode, setIsAddPhotoMode] = useState(false);
    const [target, setTarget] = useState<string | undefined>(undefined);
+   const [deleteTarget, setDeleteTarget] = useState<string | undefined>(undefined);
 
    const handleUploadImage = (photo: Blob) => {
       uploadPhoto(photo)
@@ -24,9 +25,9 @@ const ProfilePhotos = () => {
             <Grid.Column width={16} style={{ paddingBottom: 0 }} >
                <Header floated='left' icon='image' content='Photos' />
                {isCurrentUser &&
-                  <Button 
-                     floated='right' 
-                     basic 
+                  <Button
+                     floated='right'
+                     basic
                      content={isAddPhotoMode ? 'Cancel' : 'Add Photo'}
                      onClick={() => setIsAddPhotoMode(!isAddPhotoMode)} />
                }
@@ -43,18 +44,28 @@ const ProfilePhotos = () => {
                               <Image src={photo.url} />
                               {isCurrentUser && (
                                  <Button.Group fluid widths={2}>
-                                    <Button 
-                                       basic 
-                                       positive 
-                                       content='Main' 
-                                       loading={isLoading && target === photo.id} 
+                                    <Button
+                                       basic
+                                       positive
+                                       content='Main'
+                                       loading={isLoading && target === photo.id}
                                        onClick={(e) => {
                                           setMainPhoto(photo);
                                           setTarget(e.currentTarget.name)
                                        }}
                                        disabled={photo.isMain}
                                        name={photo.id} />
-                                    <Button basic negative icon='trash' />
+                                    <Button
+                                       basic
+                                       negative
+                                       icon='trash'
+                                       loading={isDeleting && deleteTarget === photo.id}
+                                       onClick={(e) => {
+                                          deletePhoto(photo);
+                                          setDeleteTarget(e.currentTarget.name)
+                                       }}
+                                       disabled={photo.isMain}
+                                       name={photo.id} />
                                  </Button.Group>
                               )}
                            </Card>
