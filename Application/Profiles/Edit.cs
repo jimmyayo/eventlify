@@ -46,8 +46,8 @@ namespace Application.Profiles
             if (user == null)
                throw new RestException(HttpStatusCode.NotFound, new { Profile = "Not Found" } );
 
-            user.Bio = request.Bio;
-            user.DisplayName = request.DisplayName;
+            user.Bio = request.Bio ?? user.Bio;
+            user.DisplayName = request.DisplayName ?? user.DisplayName;
 
             // handler logic goes here
             var success = await _context.SaveChangesAsync() > 0;

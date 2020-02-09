@@ -18,6 +18,7 @@ export default class ProfileStore {
    @observable isUploading = false;
    @observable isLoading = false;
    @observable isDeleting = false;
+   @observable isSaving = false;
 
    @computed get isCurrentUser() {
       if (this.rootStore.userStore.user && this.profile) {
@@ -25,6 +26,7 @@ export default class ProfileStore {
       }
       return false;
    }
+
    @action loadProfile = async (username: string) => {
       this.loadingProfile = true;
       try {
@@ -38,6 +40,25 @@ export default class ProfileStore {
             this.loadingProfile = false;
             console.log(error);
          })
+      }
+   }
+
+   @action updateProfile = async (profile: Partial<IProfile>) => {
+      this.isSaving = true;
+      try {
+         await agent.Profiles.updateProfile(profile);
+         runInAction(() => {
+            if (profile.displayName !==  this.rootStore.userStore.user!.displayName) {
+               this.rootStore.userStore.user!.displayName = profile.displayName!;
+            }
+            this.isSaving = false;
+            this.profile = {...this.profile!, ...profile};
+         })
+      } catch (error) {
+         runInAction(() => {
+            this.isSaving = false;
+         });
+         toast.error('There was a problem saving your profile.');
       }
    }
 
