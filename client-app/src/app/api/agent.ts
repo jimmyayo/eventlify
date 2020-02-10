@@ -82,7 +82,9 @@ const Profiles = {
    deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
    updateProfile: (profile: Partial<IProfile>) => requests.put('/profiles', profile),
    follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
-   unfollow: (username: string) => requests.delete(`/profiles/${username}/follow`)
+   unfollow: (username: string) => requests.delete(`/profiles/${username}/follow`),
+   listFollowings: (username: string, predicate: string) => 
+      requests.get(`/profiles/${username}/follow?predicate=${predicate}`)
 }
 
 export default {
