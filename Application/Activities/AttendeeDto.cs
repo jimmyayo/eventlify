@@ -7,5 +7,6 @@ namespace Application.Activities
         public string DisplayName { get; set; }
         public string Image { get; set; }
         public Boolean IsHost { get; set; }
+        public Boolean Following { get; set; }
     }
 }
