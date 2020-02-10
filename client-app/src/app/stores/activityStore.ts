@@ -29,20 +29,36 @@ export default class ActivityStore {
          })
          .configureLogging(LogLevel.Information)
          .build();
-      
-         this.hubConnection
-            .start()
-            .then(() => console.log(this.hubConnection!.state))
-            .catch(error => console.log('Error establishing hub connection: ', error));
 
-      this.hubConnection.on('ReceiveComment', comment => {
-         this.activity!.comments.push(comment)
-      });
+      this.hubConnection
+         .start()
+         .then(() => console.log(this.hubConnection!.state))
+         .catch(error => console.log('Error establishing hub connection: ', error));
 
+      this.hubConnection.on('ReceiveComment',
+         comment => {
+            runInAction(() => {
+               console.log(this.activity!.comments);
+               this.activity!.comments.push(comment);
+            })
+         });
+
+      this.hubConnection.on('Send', message => {
+         toast.info(message);
+      })
    }
 
    @action stopHubConnection = () => {
       this.hubConnection!.stop();
+   }
+
+   @action addComment = async (values: any) => {
+      values.activityId = this.activity!.id;
+      try {
+         await this.hubConnection!.invoke('SendComment', values);
+      } catch (error) {
+         console.log(error);
+      }
    }
 
    @computed get activitiesByDate() {
@@ -230,7 +246,7 @@ export default class ActivityStore {
          });
          toast.error('Problem canceling attendance');
       }
-      
+
    }
 
 }
