@@ -5,4 +5,4 @@ assets
 # .vscode
 # appsettings.json
 # *.db
-API/eventlify.db
+*.db

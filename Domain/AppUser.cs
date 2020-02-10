@@ -11,5 +11,8 @@ namespace Domain
       // marking property "virtual" will lazy-load it from EntityFramework
       public virtual ICollection<UserActivity> UserActivities { get; set; }
       public virtual ICollection<Photo> Photos { get; set; }
+
+      public virtual ICollection<UserFollowing> Followings {get;set;}
+      public virtual ICollection<UserFollowing> Followers {get;set;}
    }
 }
