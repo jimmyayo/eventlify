@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { RootStoreContext } from '../../app/stores/rootStore';
+import React from 'react'
 import { Form as FinalForm, Field } from 'react-final-form';
 import { combineValidators, isRequired } from 'revalidate';
-import { FORM_ERROR } from 'final-form';
 import TextInput from '../../app/common/form/TextInput';
 import TextAreaInput from '../../app/common/form/TextAreaInput';
 import { Button, Form } from 'semantic-ui-react';
@@ -19,8 +17,6 @@ interface IProps {
 }
 
 const ProfileEditForm : React.FC<IProps> = ({profile, updateProfile}) => {
-   const rootStore = useContext(RootStoreContext);
-   const { isSaving } = rootStore.profileStore;
 
    return (
       <FinalForm
