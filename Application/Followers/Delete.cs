@@ -43,7 +43,7 @@ namespace Application.Followers
 
             if (following == null)
                throw new RestException(HttpStatusCode.BadRequest,
-                   new { User = $"You are not following this {target.DisplayName}." });
+                   new { User = $"You are not following {target.DisplayName}." });
 
 
             _context.Followings.Remove(following);
