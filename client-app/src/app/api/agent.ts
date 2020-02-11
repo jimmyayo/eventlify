@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
-import { IActivity } from '../models/activity';
+import { IActivity, IActivityEnvelope } from '../models/activity';
 import { history } from '../..';
 import { toast } from 'react-toastify';
 import { IUser, IUserFormValues } from '../models/user';
-import { IProfile, IPhoto} from '../models/profile';
+import { IProfile, IPhoto } from '../models/profile';
 
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
@@ -12,7 +12,7 @@ axios.interceptors.request.use(
    (config) => {
       const token = window.localStorage.getItem('jwt');
       if (token) config.headers.Authorization = `Bearer ${token}`;
-      
+
       return config;
    },
    (error) => {
@@ -54,13 +54,14 @@ const requests = {
       let formData = new FormData();
       formData.append('File', file);
       return axios.post(url, formData, {
-         headers: {'Content-type': 'multipart/form-data'}
+         headers: { 'Content-type': 'multipart/form-data' }
       }).then(responseBody)
    }
 }
 
 const Activities = {
-   list: (): Promise<IActivity[]> => requests.get('/activities'),
+   list: (limit?: number, page?: number): Promise<IActivityEnvelope> =>
+      requests.get(`/activities?limit=${limit}&offset=${page ? page * limit! : 0}`),
    details: (id: string) => requests.get(`/activities/${id}`),
    create: (activity: IActivity) => requests.post('/activities', activity),
    update: (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity),
@@ -71,8 +72,8 @@ const Activities = {
 
 const User = {
    current: (): Promise<IUser> => requests.get('/user'),
-   login: (user: IUserFormValues) : Promise<IUser> => requests.post(`/user/login/`, user),
-   register: (user: IUserFormValues) : Promise<IUser> => requests.post(`/user/register/`, user)
+   login: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/login/`, user),
+   register: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/register/`, user)
 }
 
 const Profiles = {
@@ -83,7 +84,7 @@ const Profiles = {
    updateProfile: (profile: Partial<IProfile>) => requests.put('/profiles', profile),
    follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
    unfollow: (username: string) => requests.delete(`/profiles/${username}/follow`),
-   listFollowings: (username: string, predicate: string) => 
+   listFollowings: (username: string, predicate: string) =>
       requests.get(`/profiles/${username}/follow?predicate=${predicate}`)
 }
 

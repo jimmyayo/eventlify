@@ -8,6 +8,8 @@ import { RootStore } from './rootStore';
 import { setActivityProps, createAttendee } from '../common/util/util';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
+const LIMIT = 2;
+
 export default class ActivityStore {
    rootStore: RootStore;
    constructor(rootStore: RootStore) {
@@ -21,6 +23,16 @@ export default class ActivityStore {
    @observable isSubmitting = false;
    @observable target = '';
    @observable.ref hubConnection: HubConnection | null = null;
+   @observable activityCount = 0;
+   @observable page = 0;
+
+   @computed get totalPages() {
+      return Math.ceil(this.activityCount / LIMIT);
+   }
+
+   @action setPage(page: number) {
+      this.page = page;
+   }
 
    @action createHubConnection = (activityId: string) => {
       this.hubConnection = new HubConnectionBuilder()
@@ -87,21 +99,19 @@ export default class ActivityStore {
 
    @action loadActivities = async () => {
       this.loadingInitial = true;
-
-      // temporary workaround /hack!
-      //const {user} = global;
       const user = this.rootStore.userStore.user;
 
-
       try {
-         const activities = await agent.Activities.list();
+         const activitiesEnvelope = await agent.Activities.list(LIMIT, this.page);
+         const { activities, activityCount } = activitiesEnvelope;
+
          runInAction('loading activities', () => {
             activities.forEach(activity => {
-               // console.log(user);
                setActivityProps(activity, user!);
                this.activityRegistry.set(activity.id, activity);
-               this.loadingInitial = false;
             });
+            this.loadingInitial = false;
+            this.activityCount = activityCount;
          });
 
       } catch (error) {
@@ -112,9 +122,6 @@ export default class ActivityStore {
 
    @action loadActivity = async (id: string) => {
       let activity = this.getActivityFromRegistry(id);
-
-      // temporary workaround /hack!
-      //const {user} = global;
       const user = this.rootStore.userStore.user;
 
       if (activity) {

@@ -7,8 +7,8 @@ interface IProps {
 }
 
 const styles = {
-   borderColor: 'red',
-   borderWidth: 2
+   borderColor: 'orange',
+   borderWidth: 3
 }
 
 const ActivityListItemAttendees: React.FC<IProps> = ({ attendees }) => {
@@ -18,7 +18,7 @@ const ActivityListItemAttendees: React.FC<IProps> = ({ attendees }) => {
             <List.Item key={attendee.userName}>
                <Popup
                   header={attendee.displayName}
-
+                  content={attendee.following? 'You are following this user' : null}
                   trigger={
                      <Image 
                         size='mini' 
