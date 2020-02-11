@@ -30,7 +30,7 @@ export default class ActivityStore {
       return Math.ceil(this.activityCount / LIMIT);
    }
 
-   @action setPage(page: number) {
+   @action setPage = (page: number) => {
       this.page = page;
    }
 

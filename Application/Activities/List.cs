@@ -49,7 +49,7 @@ namespace Application.Activities
             return new ActivitiesEnvelope
             {
                Activities = _mapper.Map<List<Activity>, List<ActivityDto>>(activities),
-               ActivityCount = activities.Count()
+               ActivityCount = queryable.Count()
             };
          }
       }
