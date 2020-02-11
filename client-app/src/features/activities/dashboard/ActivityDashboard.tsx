@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { RootStoreContext } from '../../../app/stores/rootStore';
 import InfiniteScroll from 'react-infinite-scroller';
-
+import ActivityFilters from './ActivityFilters';
 
 const ActivityDashboard = () => {
 
@@ -42,7 +42,7 @@ const ActivityDashboard = () => {
             </InfiniteScroll>
          </Grid.Column>
          <Grid.Column width={6}>
-            <h2>Activity Filters</h2>
+            <ActivityFilters />
          </Grid.Column>
          <Grid.Column width={10}>
             <Loader active={isLoadingNext} />
