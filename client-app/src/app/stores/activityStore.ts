@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction } from 'mobx';
+import { observable, action, computed, runInAction, reaction } from 'mobx';
 import { SyntheticEvent } from 'react';
 import { IActivity, IActivityFormValues } from '../models/activity';
 import agent from '../api/agent';
@@ -14,6 +14,16 @@ export default class ActivityStore {
    rootStore: RootStore;
    constructor(rootStore: RootStore) {
       this.rootStore = rootStore;
+
+      // if predicate keys change, run this reaction (2nd arg)
+      reaction(
+         () => this.predicate.keys(),
+         () => {
+            this.page = 0; 
+            this.activityRegistry.clear();
+            this.loadActivities();
+         }
+      )
    }
 
    @observable activityRegistry = new Map();
@@ -25,6 +35,29 @@ export default class ActivityStore {
    @observable.ref hubConnection: HubConnection | null = null;
    @observable activityCount = 0;
    @observable page = 0;
+   @observable predicate = new Map();
+
+   @action setPredicate = (predicate: string, value: string | Date) => {
+      this.predicate.clear();
+      if (predicate !== 'all') {
+         this.predicate.set(predicate, value);
+      }
+   }
+
+   @computed get axiosParams() {
+      const params = new URLSearchParams();
+      params.append('limit', String(LIMIT));
+      params.append('offset', `${this.page ? this.page * LIMIT : 0}`);
+      this.predicate.forEach((value, key) => {
+         if (key === 'startDate') {
+            params.append(key, value.toISOString());
+         } else {
+            params.append(key, value);
+         }
+      });
+
+      return params;
+   }
 
    @computed get totalPages() {
       return Math.ceil(this.activityCount / LIMIT);
@@ -98,11 +131,12 @@ export default class ActivityStore {
    }
 
    @action loadActivities = async () => {
+      console.log('in loadActivities');
       this.loadingInitial = true;
       const user = this.rootStore.userStore.user;
 
       try {
-         const activitiesEnvelope = await agent.Activities.list(LIMIT, this.page);
+         const activitiesEnvelope = await agent.Activities.list(this.axiosParams);
          const { activities, activityCount } = activitiesEnvelope;
 
          runInAction('loading activities', () => {

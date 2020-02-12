@@ -15,7 +15,6 @@ const ActivityDashboard = () => {
    const [isLoadingNext, setIsLoadingNext] = useState(false);
 
    const handleGetNext = () => {
-      console.log(totalPages);
       setIsLoadingNext(true);
       setPage(page + 1);
       loadActivities().then(() => setIsLoadingNext(false));
