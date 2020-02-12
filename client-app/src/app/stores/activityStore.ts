@@ -131,7 +131,6 @@ export default class ActivityStore {
    }
 
    @action loadActivities = async () => {
-      console.log('in loadActivities');
       this.loadingInitial = true;
       const user = this.rootStore.userStore.user;
 
