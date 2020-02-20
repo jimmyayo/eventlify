@@ -37,7 +37,6 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       <ModalContainer />
-
       <Route exact path='/' component={HomePage} />
       <Route path={'/(.+)'} render={() => (
         <>
