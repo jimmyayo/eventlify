@@ -6,3 +6,4 @@ assets
 # appsettings.json
 # *.db
 *.db
+wwwroot
