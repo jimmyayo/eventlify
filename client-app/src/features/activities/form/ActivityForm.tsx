@@ -125,11 +125,12 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                               name='city'
                               value={activity.city} />
                            <Field
-                              component={TextInput}
+                              component={PlacesAutocomplete}
                               placeholder='Venue'
                               name='venue'
+                              
                               value={activity.venue} />
-                              {/* <PlacesAutocomplete /> */}
+                              
                            <Button
                               disabled={isLoading || invalid || pristine}
                               floated='right'

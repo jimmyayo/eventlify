@@ -3,7 +3,12 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocom
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { List } from 'semantic-ui-react';
 
-const PlacesAutocomplete = () => {
+// interface IProps {
+//   placeholder: string
+// }
+
+// const PlacesAutocomplete: React.FC<IProps> = ({placeholder}) => {
+  const PlacesAutocomplete = () => {
   const {
     ready,
     value,
@@ -69,7 +74,7 @@ const PlacesAutocomplete = () => {
         value={value}
         onChange={handleInput}
         disabled={!ready}
-        placeholder="Where is your event?"
+        placeholder='Where is your venue?'
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}
       {status === 'OK' && <List selection divided relaxed>{renderSuggestions()}</List>}
