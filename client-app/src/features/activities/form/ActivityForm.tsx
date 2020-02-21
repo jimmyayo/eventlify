@@ -125,7 +125,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                               name='city'
                               value={activity.city} />
                            <Field
-                              component={PlacesAutocomplete}
+                              component={TextInput}
                               placeholder='Venue'
                               name='venue'
                               

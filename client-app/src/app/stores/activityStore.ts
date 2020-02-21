@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, reaction } from 'mobx';
+import { observable, action, computed, runInAction, reaction, toJS } from 'mobx';
 import { SyntheticEvent } from 'react';
 import { IActivity, IActivityFormValues } from '../models/activity';
 import agent from '../api/agent';
@@ -159,7 +159,8 @@ export default class ActivityStore {
 
       if (activity) {
          this.activity = activity;
-         return activity;
+         // need toJS() to return activity as a non-observable object. 
+         return toJS(activity);
       } else {
          // couldn't retrieve activity from local registry, so retrieve from api
          this.loadingInitial = true;
