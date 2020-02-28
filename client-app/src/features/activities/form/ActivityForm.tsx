@@ -13,7 +13,7 @@ import { combineDateAndTime } from '../../../app/common/util/util';
 import { category } from '../../../features/activities/form/options/categoryOptions';
 import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate';
 import { RootStoreContext } from '../../../app/stores/rootStore';
-import PlacesAutocomplete from '../../../app/common/form/PlacesAutocomplete';
+//import PlacesAutocomplete from '../../../app/common/form/PlacesAutocomplete';
 
 const validate = combineValidators({
    title: isRequired({ message: 'Event title is required' }),
