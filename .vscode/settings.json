@@ -19,7 +19,7 @@
                 "user": "root", "password": "Qwepoi!2",
                 "dir": "/var/eventlify",
                 "mappings": {
-                    "api/publish/**": "/"
+                    "publish/**": "/"
                 }
             }
         ]
