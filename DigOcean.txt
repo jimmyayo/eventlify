@@ -22,15 +22,15 @@ systemctl restart apache2
 
 5.  Configure the virtual host
 
-sudo nano /etc/apache2/sites-available/reactivities.conf
+sudo nano /etc/apache2/sites-available/eventlify.conf
 
 <VirtualHost *:80>
 ProxyPreserveHost On
 ProxyPass / http://127.0.0.1:5000/
 ProxyPassReverse / http://127.0.0.1:5000/
 
-ErrorLog /var/log/apache2/reactivities-error.log
-CustomLog /var/log/apache2/reactivities-access.log common
+ErrorLog /var/log/apache2/eventlify-error.log
+CustomLog /var/log/apache2/eventlify-access.log common
 
 RewriteEngine on
 RewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]
@@ -39,9 +39,23 @@ RewriteRule /(.*) ws://127.0.0.1:5000/$1 [P]
 
 </VirtualHost>
 
+	(medium.com article)
+	<VirtualHost *:80>
+	    ProxyPreserveHost On
+	 
+	    ProxyPass / http://127.0.0.1:5000/
+	    ProxyPassReverse / http://127.0.0.1:5000/
+	    ServerAdmin webmaster@localhost
+	    ServerName example.com
+	    ServerAlias www.example.com
+	    ErrorLog ${APACHE_LOG_DIR}/error.log
+	    CustomLog ${APACHE_LOG_DIR}/access.log combined
+	</VirtualHost>
+
+
 6. Enable the site 
 
-a2ensite reactivities
+a2ensite eventlify
 
 
 --- deploy the published app before going further ---
@@ -68,13 +82,11 @@ a2ensite reactivities
                 "type": "sftp",
                 "name": "Linux",
                 "description": "SFTP folder",
-
-                "host": "165.22.134.96", "port": 22,
-                "user": "root", "password": "yourpassword",
-
-                "dir": "/var/reactivities",
+                "host": "68.183.30.138", "port": 22,
+                "user": "root", "password": "Qwepoi!2",
+                "dir": "/var/eventlify",
                 "mappings": {
-                    "api/publish/**": "/"
+                    "publish/**": "/"
                 }
             }
         ]
@@ -83,13 +95,13 @@ a2ensite reactivities
 
 8.  Publish the dotnet application:
 
-dotnet publish -c Release -o publish --self-contained false Reactivities.sln
+dotnet publish -c Release -o publish --no-self-contained Eventlify.sln
 
 9.  Deploy the 'package' using the command shell - deploy package
 
 10.  Check the files are on the Linux server:
 
-ls /var/reactivities/
+ls /var/eventlify/
 
 11.  Set up the kestrel web service
 
@@ -98,22 +110,24 @@ sudo nano /etc/systemd/system/kestrel-web.service
 [Unit]
 Description=Kestrel service running on Ubuntu 18.04
 [Service]
-WorkingDirectory=/var/reactivities
-ExecStart=/usr/bin/dotnet /var/reactivities/API.dll
+WorkingDirectory=/var/eventlify
+ExecStart=/usr/bin/dotnet /var/eventlify/API.dll
 Restart=always
 RestartSec=10
-SyslogIdentifier=reactivities
+SyslogIdentifier=eventlify
 User=www-data
 Environment=ASPNETCORE_ENVIRONMENT=Production
-Environment='Cloudinary__CloudName=digua6bil'
-Environment='Cloudinary__ApiSecret=oqP4cDzpdaKG4Zf8qBxHQB2xIjI'
-Environment='Cloudinary__ApiKey=269272975632736'
+Environment='Cloudinary__CloudName=divf4zytq'
+Environment='Cloudinary__ApiSecret=18EdicScsjYla73A44PtRnz9m2E'
+Environment='Cloudinary__ApiKey=677436978468828'
 Environment='TokenKey=super secret key'
 [Install]
 WantedBy=multi-user.target
 
 sudo systemctl enable kestrel-web.service
+sudo systemctl stop kestrel-web.service
 sudo systemctl start kestrel-web.service
+sudo systemctl status kestrel-web.service
 
 12.  Ensure the server is listening on Port 5000
 
@@ -123,7 +137,7 @@ netstat -ntpl
 
 mysql -u appuser -p
 show databases;
-use reactivities;
+use eventlify;
 show tables;
 select * from activities;
 
